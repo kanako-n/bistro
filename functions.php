@@ -39,3 +39,26 @@ add_theme_support( 'post-thumbnails' );
 //カスタムメニュー機能を使用可能にする
 add_theme_support( 'menus' );
 
+//最新記事トップページだけ表示する投稿数を変える
+function my_pre_get_posts($query){
+    //管理画面、メインクエリ以外には設定しない
+    if( is_admin() || ! $query->is_main_query() ) {
+        return;
+    }
+
+    //トップページの場合
+    if ( $query->is_home() ) {
+        $query->set( 'posts_per_page', 3 );
+        return;
+    }
+}
+add_action( 'pre_get_posts', 'my_pre_get_posts' );
+
+//コンタクトページでのHTML自動生成機能を停止
+function my_wpautop() {
+    if( is_page( 'contact' ) ) {
+        remove_filter( 'the_contact', 'wpautop' );
+    }
+}
+add_action( 'wp', 'my_wpautop');
+
